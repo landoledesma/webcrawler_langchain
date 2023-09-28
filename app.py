@@ -21,7 +21,7 @@ def get_url_name(url):
 def run_llm(url,query):
     llm = ChatOpenAI(temperature=0.5)
     query_website_tool = WebpageQATool(qa_chain=load_qa_with_sources_chain(llm))
-    result = query_website_tool.run(url,query)
+    result = query_website_tool._run(url,query)
     return result
 
 st.markdown("<h1 style='text-align: center; color: green;'>Traer infomacion  de la  Web 🦜 </h1>",

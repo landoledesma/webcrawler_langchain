@@ -1,32 +1,24 @@
-
-from urllib.parse import urlparse
 from langchain.chains.qa_with_sources.loading import load_qa_with_sources_chain, BaseCombineDocumentsChain
 from langchain.tools.base import BaseTool
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from pydantic import Field
-import asyncio
 from langchain.docstore.document import Document
 import requests
 
-def _get_text_splitter():
-    return RecursiveCharacterTextSplitter(
-        chunk_size = 500,
-        chunk_overlap = 20,
-        length_function = len
-    )
 class WebpageQATool(BaseTool):
-
     name = "query_webpage"
     description = "Busca una pagina web y devuelve la informacion relevante a la pregunta Usa bullet points para listar la respuesta"
-    text_splitter: RecursiveCharacterTextSplitter = Field(default_factory=_get_text_splitter)
-    qa_chain :BaseCombineDocumentsChain
+    qa_chain : BaseCombineDocumentsChain
 
     def _run(self,url:str,question:str) -> str:
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size = 500,
+        chunk_overlap  = 20,
+        length_function = len,)
+
         response = requests.get(url)
         page_content = response.text
         print(page_content)
         docs = [Document(page_content=page_content,metadata={"source":url})]
-        web_docs = self.text_splitter.split_documents(docs)
+        web_docs = text_splitter.split_documents(docs)
         results = []
         for i in range(0,len(web_docs),4):
             input_docs = web_docs[i:i+4]
