@@ -5,12 +5,8 @@ from dotenv import load_dotenv
 import os
 import openai
 from langchain.chains.qa_with_sources.loading import load_qa_with_sources_chain, BaseCombineDocumentsChain
-from langchain.tools.base import BaseTool
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 from pydantic import Field
 import asyncio
-from langchain.docstore.document import Document
-import requests
 
 load_dotenv("token.env")
 
@@ -20,7 +16,13 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 @st.cache_resource
 def get_url_name(url):
     parsed_url = urlparse(url)
-    return parsed_url
+    return parsed_url.netloc
+
+def run_llm(url,query):
+    llm = ChatOpenAI(temperature=0.5)
+    query_website_tool = WebpageQATool(qa_chain=load_qa_with_sources_chain(llm))
+    result = query_website_tool.run(url,query)
+    return result
 
 st.markdown("<h1 style='text-align: center; color: green;'>Traer infomacion  de la  Web 🦜 </h1>",
             unsafe_allow_html=True)
@@ -32,4 +34,8 @@ st.markdown("<h2 style='text-align: center; color:red;'>Ingresa la  URL del siti
 input_url = st.text_input("Ingresa URL")
 
 if len(input_url)>0:
-    pass
+    url_name = get_url_name(input_url)
+    st.info("Your URL is")
+    st.write(url_name)
+    st.markdown("<h2 style='text-align: center; color:red;'>Ingresa la  URL del sitio 👇</h2>",
+            unsafe_allow_html=True)
