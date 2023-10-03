@@ -16,7 +16,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 @st.cache_resource
 def get_url_name(url):
     parsed_url = urlparse(url)
-    return parsed_url.netloc
+    return parsed_url
 
 def run_llm(url,query):
     llm = ChatOpenAI(temperature=0.5)
@@ -26,8 +26,7 @@ def run_llm(url,query):
 
 st.markdown("<h1 style='text-align: center; color: green;'>Traer infomacion  de la  Web 🦜 </h1>",
             unsafe_allow_html=True)
-st.markdown("<h3 style='text-align: center; color: green;'>Desarrollado por <a href='https://github.com/AIAnytime'>AI Anytime with ❤️ </a></h3>",
-            unsafe_allow_html=True)
+
 st.markdown("<h2 style='text-align: center; color:red;'>Ingresa la  URL del sitio 👇</h2>",
             unsafe_allow_html=True)
 
